@@ -48,11 +48,24 @@ export const useGoalTemplates = () => {
     }
   };
 
+  // NOWA FUNKCJA USUWANIA SZABLONU
+  const deleteTemplate = async (id: string) => {
+    try {
+      await templateService.delete(id);
+      const updatedTemplates = await templateService.getAll();
+      setTemplates(updatedTemplates);
+    } catch (err) {
+      setError("Failed to delete template");
+      throw err;
+    }
+  };
+
   return {
     templates,
     loading,
     error,
     addTemplate,
-    updateTemplate
+    updateTemplate,
+    deleteTemplate // <-- EKSPORTUJEMY FUNKCJĘ
   };
 };

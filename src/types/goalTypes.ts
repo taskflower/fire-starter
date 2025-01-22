@@ -13,7 +13,24 @@ export interface GoalTemplate {
     title: string;
     description: string;
     requiredDocuments: DocumentRequirement[];
-    dependsOn?: string[]; // Step IDs that must be completed first
+    questions: StepQuestion[];
+    dependsOn?: string[];
+  }
+
+  export interface StepQuestion {
+    id: string;
+    type: 'text' | 'select' | 'multiselect' | 'number';
+    question: string;
+    required: boolean;
+    options?: string[];
+  }
+
+  export interface QuestionFormData {
+    id: string;
+    type: 'text' | 'select' | 'multiselect' | 'number';
+    question: string;
+    required: boolean;
+    options: string[];
   }
   
   export interface DocumentRequirement {
