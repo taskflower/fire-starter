@@ -1,1 +1,0 @@
-export const wizardsService = new FirestoreService<Wizard>("wizards");

@@ -1,10 +1,10 @@
 // src/components/categories/CategoryForm.tsx
 import React from 'react';
-import { Category } from '@/services/types';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import CategoryParentSelect from './CategoryParentSelect';
+import { Category } from '@/types/types';
 
 interface CategoryFormProps {
   category: Partial<Category>;

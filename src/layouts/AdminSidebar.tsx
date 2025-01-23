@@ -20,10 +20,7 @@ export const AdminSidebar = () => {
               <Link to="/admin/documents">Documents</Link>
             </Button>
             <Button variant="ghost" className="w-full justify-start" asChild>
-              <Link to="/admin/wizards">Wizards</Link>
-            </Button>
-            <Button variant="ghost" className="w-full justify-start" asChild>
-              <Link to="/admin/path">Goals</Link>
+              <Link to="/admin/goals">Goals</Link>
             </Button>
           </div>
         </div>

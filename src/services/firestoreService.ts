@@ -3,6 +3,7 @@ import {
   collection,
   doc,
   addDoc,
+  getDoc,
   getDocs,
   deleteDoc,
   updateDoc,
@@ -55,6 +56,12 @@ export class FirestoreService<T extends DocumentData> {
   async delete(id: string): Promise<void> {
     const docRef = doc(this.collectionRef, id);
     await deleteDoc(docRef);
+  }
+
+  async getById(id: string): Promise<(T & { id: string }) | null> {
+    const docRef = doc(this.collectionRef, id);
+    const docSnap = await getDoc(docRef);
+    return docSnap.exists() ? { ...docSnap.data(), id: docSnap.id } as T & { id: string } : null;
   }
 }
 

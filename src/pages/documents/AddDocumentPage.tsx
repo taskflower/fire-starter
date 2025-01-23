@@ -5,7 +5,7 @@ import { useDocuments } from '@/hooks/useDocuments';
 import { useCategories } from '@/hooks/useCategories';
 import { Card, CardHeader, CardContent } from '@/components/ui/card';
 import DocumentForm from '@/components/documents/DocumentForm';
-import { Document as DocumentType } from '@/services/types';
+
 
 const AddDocumentPage: React.FC = () => {
   const navigate = useNavigate();

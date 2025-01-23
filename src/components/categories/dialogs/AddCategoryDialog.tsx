@@ -1,6 +1,5 @@
 // src/components/categories/dialogs/AddCategoryDialog.tsx
 import React from 'react';
-import { Category } from "@/services/types";
 import {
   Dialog,
   DialogContent,
@@ -8,6 +7,7 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import CategoryForm from '../CategoryForm';
+import { Category } from '@/types/types';
 
 interface AddCategoryDialogProps {
   isOpen: boolean;

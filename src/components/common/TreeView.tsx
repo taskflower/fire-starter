@@ -1,6 +1,6 @@
 // src/components/common/TreeView.tsx
 import React from 'react';
-import { ChevronRight, File } from 'lucide-react';
+import { ChevronRight, Tag } from 'lucide-react';
 import { cn } from '@/services/utils';
 import { ProcessedTreeNode } from '@/utils/treeUtils';
 
@@ -43,7 +43,7 @@ export const TreeView: React.FC<TreeViewProps> = ({
                   node.children?.length > 0 ? (
                     <ChevronRight className="h-4 w-4 text-muted-foreground" />
                   ) : (
-                    <File className="h-4 w-4 text-muted-foreground" />
+                    <Tag className="h-4 w-4 text-muted-foreground" />
                   )
                 )
               )}
