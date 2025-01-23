@@ -17,7 +17,8 @@ export interface StepConfig {
   documentRequirements?: DocumentRequirement[];
   questions?: Question[];
   llmPrompt?: string;
-  validationRules?: ValidationRules; // Dodane dla rozszerzonych walidacji
+  validationRules?: ValidationRules;
+  includeSteps?: string[]; // dodane pole na ID kroków
 }
 
 export interface ValidationRules {

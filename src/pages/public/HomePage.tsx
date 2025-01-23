@@ -22,7 +22,7 @@ const HomePage = () => {
     <div className="container mx-auto space-y-16 px-6 py-16">
       <header className="mx-auto max-w-2xl text-center space-y-4">
         <h1 className="text-5xl font-bold tracking-tight">
-          Goal Pathway System
+          Goals Pathway
         </h1>
         <p className="text-lg text-muted-foreground">
           Organize your documents and dynamically expand context with structured

@@ -1,4 +1,3 @@
-// src/pages/goals/components/edit/forms/QuestionsForm.tsx
 import { StepConfig, Question } from '@/components/newgoals/types';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -8,11 +7,12 @@ import { Plus, X } from 'lucide-react';
 import { useState } from 'react';
 
 interface QuestionsFormProps {
-    config?: StepConfig; // Dodaj optional
+  config?: StepConfig;
   onChange: (config: StepConfig) => void;
 }
 
 export function QuestionsForm({ config = {}, onChange }: QuestionsFormProps) {
+  const [isAddingQuestion, setIsAddingQuestion] = useState(false);
   const [newQuestion, setNewQuestion] = useState<Partial<Question>>({
     type: 'text',
     question: '',
@@ -34,6 +34,7 @@ export function QuestionsForm({ config = {}, onChange }: QuestionsFormProps) {
       questions: [...(config.questions || []), question]
     });
     setNewQuestion({ type: 'text', question: '', required: true });
+    setIsAddingQuestion(false);
   };
 
   const removeQuestion = (index: number) => {
@@ -57,36 +58,58 @@ export function QuestionsForm({ config = {}, onChange }: QuestionsFormProps) {
         ))}
       </div>
 
-      <div className="space-y-2 border-t pt-4">
-        <div className="space-y-2">
-          <Label>Question Type</Label>
-          <Select
-            value={newQuestion.type}
-            onValueChange={(value: 'text' | 'select' | 'number') => 
-              setNewQuestion({ ...newQuestion, type: value })}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Select question type..." />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="text">Text</SelectItem>
-              <SelectItem value="select">Select</SelectItem>
-              <SelectItem value="number">Number</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-        <div className="space-y-2">
-          <Label>Question</Label>
-          <Input
-            value={newQuestion.question}
-            onChange={e => setNewQuestion({ ...newQuestion, question: e.target.value })}
-            placeholder="Enter question..."
-          />
-        </div>
-        <Button onClick={addQuestion} className="w-full">
-          <Plus className="h-4 w-4 mr-2" /> Add Question
+      {!isAddingQuestion ? (
+        <Button 
+          variant="outline" 
+          className="w-full" 
+          onClick={() => setIsAddingQuestion(true)}
+        >
+          <Plus className="h-4 w-4 mr-2" /> Create Question
         </Button>
-      </div>
+      ) : (
+        <div className="space-y-4 border p-4 rounded-lg">
+          <div className="space-y-2">
+            <Label>Question Type</Label>
+            <Select
+              value={newQuestion.type}
+              onValueChange={(value: 'text' | 'select' | 'number') => 
+                setNewQuestion({ ...newQuestion, type: value })}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select question type..." />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="text">Text</SelectItem>
+                <SelectItem value="select">Select</SelectItem>
+                <SelectItem value="number">Number</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="space-y-2">
+            <Label>Question</Label>
+            <Input
+              value={newQuestion.question}
+              onChange={e => setNewQuestion({ ...newQuestion, question: e.target.value })}
+              placeholder="Enter question..."
+            />
+          </div>
+          <div className="flex gap-2">
+            <Button 
+              variant="outline" 
+              onClick={() => setIsAddingQuestion(false)}
+              className="flex-1"
+            >
+              Cancel
+            </Button>
+            <Button 
+              onClick={addQuestion}
+              className="flex-1"
+            >
+              Add Question
+            </Button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -25,6 +25,8 @@ import { useNavigate } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { useState } from "react";
+import StepsDataViewer from "@/components/newgoals/stateDataDialog/StepsDataViewer";
+
 
 export default function NewGoalsPage() {
   const navigate = useNavigate();
@@ -84,7 +86,9 @@ export default function NewGoalsPage() {
               <>
                 <Button
                   variant="outline"
-                  onClick={() => navigate(`/admin/goal/${selectedTemplateId}/edit`)}
+                  onClick={() =>
+                    navigate(`/admin/goal/${selectedTemplateId}/edit`)
+                  }
                 >
                   <Edit className="h-4 w-4 mr-2" />
                   Edit
@@ -132,8 +136,10 @@ export default function NewGoalsPage() {
             />
           </CardContent>
 
-          <CardFooter className="bg-muted/50">
-            <div className="w-full space-y-2">
+          <CardFooter className="bg-muted/50 pt-4">
+          <StepsDataViewer />
+            {/* TODO: sprawdz w typich i w store czy to jest uzywane i jesli tak to wywal to */}
+            {/* <div className="w-full space-y-2">
               <p className="text-sm font-medium">Required Categories:</p>
               <div className="flex flex-wrap gap-2">
                 {selectedTemplate.requiredCategories.map((category) => (
@@ -142,7 +148,7 @@ export default function NewGoalsPage() {
                   </Badge>
                 ))}
               </div>
-            </div>
+            </div> */}
           </CardFooter>
         </Card>
       )}

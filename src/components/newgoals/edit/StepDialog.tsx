@@ -25,22 +25,37 @@ interface StepDialogProps {
 }
 
 export function StepDialog({ open, onOpenChange, step, onSave }: StepDialogProps) {
-    const [formData, setFormData] = useState<Partial<Step>>({
-        title: '',
-        description: '',
-        type: undefined,
-        config: {} // Pusty obiekt zamiast undefined
-      });
+  const [formData, setFormData] = useState<Partial<Step>>({
+    title: '',
+    description: '',
+    type: undefined,
+    config: {
+      documentRequirements: [],
+      questions: [],
+      llmPrompt: ''
+    }
+  });
 
   useEffect(() => {
     if (step) {
-      setFormData(step);
+      setFormData({
+        ...step,
+        config: step.config || {
+          documentRequirements: [],
+          questions: [],
+          llmPrompt: ''
+        }
+      });
     } else {
       setFormData({
         title: '',
         description: '',
         type: undefined,
-        config: {},
+        config: {
+          documentRequirements: [],
+          questions: [],
+          llmPrompt: ''
+        }
       });
     }
   }, [step]);

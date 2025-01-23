@@ -1,76 +1,75 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-// src/services/llm.ts
 import { useGoalStore } from '@/store/useGoalStore';
-import { Step } from '@/components/newgoals/types';
+import { DocumentWithId } from '@/types/types';
 
-interface StepData {
-  answers?: Record<string, any>;
-  documentIds?: string[];
-}
+export function buildPromptWithContext(
+  prompt: string, 
+  currentStepId: string,
+  documents: DocumentWithId[]
+): string {
+  const { steps, stepsData } = useGoalStore.getState();
+  const currentStep = steps.find(s => s.id === currentStepId);
+  const messages: string[] = [];
 
-interface GoalStoreState {
-  steps: Step[];
-  stepsData: Record<string, StepData>;
+  if (!currentStep?.config.includeSteps) {
+    return prompt;
+  }
+
+  currentStep.config.includeSteps.forEach(stepId => {
+    const step = steps.find(s => s.id === stepId);
+    const data = stepsData[stepId];
+
+    if (!step || !data) return;
+
+    if (step.description) {
+      messages.push(step.description);
+    }
+
+    if (step.type === 'questions' && data.answers) {
+      step.config.questions?.forEach(q => {
+        const answer = data.answers?.[q.id];
+        if (answer) {
+          messages.push(`${q.question}\nOdpowiedź: ${answer}`);
+        }
+      });
+    }
+
+    if (step.type === 'document_selection' && data.documentIds) {
+      data.documentIds.forEach(docId => {
+        const doc = documents.find(d => d.id === docId);
+        if (doc?.content) {
+          messages.push(doc.content);
+        }
+      });
+    }
+
+    if (step.type === 'llm_processing' && data.llmResponse) {
+      messages.push(data.llmResponse);
+    }
+  });
+
+  messages.push(prompt);
+
+  return messages.join('\n\n');
 }
 
 export async function processWithLLM(prompt: string): Promise<string> {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve(`Example response for prompt: ${prompt}`);
-    }, 1000);
-  });
-}
-
-interface ContextData {
-  previousAnswers: Array<{
-    stepTitle: string;
-    answers: Record<string, any>;
-  } | null>;
-  selectedDocuments: Array<{
-    stepTitle: string;
-    documentIds: string[];
-  } | null>;
-}
-
-export function buildPromptWithContext(
-  basePrompt: string,
-  stepId: string
-): string {
-  const state = useGoalStore.getState() as GoalStoreState;
-  const { stepsData, steps } = state;
-  const contextData: ContextData = {
-    previousAnswers: [],
-    selectedDocuments: []
-  };
-
-  const currentStepIndex = steps.findIndex(s => s.id === stepId);
-  const previousSteps = steps.slice(0, currentStepIndex);
-
-  contextData.previousAnswers = previousSteps
-    .map(step => {
-      const stepData = stepsData[step.id];
-      if (stepData?.answers) {
-        return {
-          stepTitle: step.title,
-          answers: stepData.answers
-        };
-      }
-      return null;
+  try {
+    const response = await fetch('/api/llm', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ prompt })
     });
 
-  contextData.selectedDocuments = previousSteps
-    .map(step => {
-      const stepData = stepsData[step.id];
-      if (stepData?.documentIds) {
-        return {
-          stepTitle: step.title,
-          documentIds: stepData.documentIds
-        };
-      }
-      return null;
-    });
+    if (!response.ok) {
+      throw new Error('LLM processing failed');
+    }
 
-  return basePrompt.replace(/{(\w+)}/g, (match, key: keyof ContextData) => {
-    return contextData[key] ? JSON.stringify(contextData[key], null, 2) : match;
-  });
+    const data = await response.json();
+    return data.response;
+  } catch (error) {
+    console.error('LLM processing error:', error);
+    throw error;
+  }
 }

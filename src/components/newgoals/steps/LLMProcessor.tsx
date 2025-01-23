@@ -1,9 +1,9 @@
-// src/components/newgoals/steps/LLMProcessor.tsx
-import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { useGoalStore } from '@/store/useGoalStore';
-import { StepConfig } from '../types';
-import { processWithLLM, buildPromptWithContext } from '@/services/llm';
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { useGoalStore } from "@/store/useGoalStore";
+import { StepConfig } from "../types";
+import { buildPromptWithContext, processWithLLM } from "@/services/llm";
+import { useDocuments } from "@/hooks/useDocuments";
 
 interface LLMProcessorProps {
   config: StepConfig;
@@ -13,21 +13,21 @@ interface LLMProcessorProps {
 export function LLMProcessor({ config, stepId }: LLMProcessorProps) {
   const [isProcessing, setIsProcessing] = useState(false);
   const { stepsData, setStepData } = useGoalStore();
+  const { documents } = useDocuments();
   const response = stepsData[stepId]?.llmResponse;
 
   const handleProcess = async () => {
-    if (!config.llmPrompt) return;
-
     setIsProcessing(true);
     try {
-      // Budujemy prompt z kontekstem
-      const fullPrompt = buildPromptWithContext(config.llmPrompt, stepId);
-      // Wywołujemy LLM
+      const fullPrompt = buildPromptWithContext(
+        config.llmPrompt ? config.llmPrompt : "",
+        stepId,
+        documents
+      );
       const result = await processWithLLM(fullPrompt);
       setStepData(stepId, { llmResponse: result });
     } catch (error) {
-      console.error('Error processing with LLM:', error);
-      // Tutaj możesz dodać obsługę błędów, np. wyświetlenie komunikatu
+      console.error("Error processing with LLM:", error);
     } finally {
       setIsProcessing(false);
     }
@@ -44,7 +44,7 @@ export function LLMProcessor({ config, stepId }: LLMProcessorProps) {
             disabled={isProcessing}
             className="mt-4"
           >
-            {isProcessing ? 'Przetwarzanie...' : 'Wygeneruj ponownie'}
+            {isProcessing ? "Przetwarzanie..." : "Wygeneruj ponownie"}
           </Button>
         </div>
       ) : (
@@ -53,7 +53,7 @@ export function LLMProcessor({ config, stepId }: LLMProcessorProps) {
           disabled={isProcessing}
           className="w-full"
         >
-          {isProcessing ? 'Przetwarzanie...' : 'Generuj'}
+          {isProcessing ? "Przetwarzanie..." : "Generuj"}
         </Button>
       )}
     </div>
