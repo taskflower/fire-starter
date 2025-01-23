@@ -1,30 +1,37 @@
-// src/layouts/AdminSidebar.tsx
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { Home, Settings, FileText, Target } from "lucide-react"; // Import ikon Lucide
 
 export const AdminSidebar = () => {
   return (
-    <ScrollArea className="h-screen w-64 border-r bg-background">
+    <div className="h-screen w-64 border-r bg-background sticky top-0">
       <div className="space-y-4 py-4">
         <div className="px-3 py-2">
           <h2 className="mb-2 px-4 text-lg font-semibold">RAG Panel</h2>
           <div className="space-y-1">
             <Button variant="ghost" className="w-full justify-start" asChild>
-              <Link to="/admin/dashboard">Dashboard</Link>
+              <Link to="/admin/dashboard">
+                <Home className="mr-2 h-5 w-5" /> Dashboard
+              </Link>
             </Button>
             <Button variant="ghost" className="w-full justify-start" asChild>
-              <Link to="/admin/settings">Settings</Link>
+              <Link to="/admin/settings">
+                <Settings className="mr-2 h-5 w-5" /> Settings
+              </Link>
             </Button>
             <Button variant="ghost" className="w-full justify-start" asChild>
-              <Link to="/admin/documents">Documents</Link>
+              <Link to="/admin/documents">
+                <FileText className="mr-2 h-5 w-5" /> Documents
+              </Link>
             </Button>
             <Button variant="ghost" className="w-full justify-start" asChild>
-              <Link to="/admin/goals">Goals</Link>
+              <Link to="/admin/goals">
+                <Target className="mr-2 h-5 w-5" /> Goals
+              </Link>
             </Button>
           </div>
         </div>
       </div>
-    </ScrollArea>
+    </div>
   );
 };

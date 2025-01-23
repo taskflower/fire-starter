@@ -75,7 +75,7 @@ export default function EditGoalsPage() {
 
   return (
     <div className="container mx-auto py-8 space-y-8">
-      {/* Header with navigation */}
+      {/* Header z nawigacją */}
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold">Edycja ścieżki celów</h1>
@@ -116,78 +116,81 @@ export default function EditGoalsPage() {
         </div>
       </div>
 
-      {/* Basic information card */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Podstawowe informacje</CardTitle>
-          <CardDescription>
-            Edytuj główne informacje o ścieżce celów
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="title">Nazwa ścieżki</Label>
-            <Input
-              id="title"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              placeholder="Wprowadź nazwę ścieżki..."
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="description">Opis</Label>
-            <Textarea
-              id="description"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              placeholder="Wprowadź opis ścieżki..."
-              rows={4}
-            />
-          </div>
-        </CardContent>
-        <CardFooter className="flex justify-between">
-          <div className="flex flex-wrap gap-2">
-            {template.requiredCategories.map((category: string) => (
-              <Badge key={category} variant="secondary">
-                {category}
-              </Badge>
-            ))}
-          </div>
-          <Button onClick={handleSave}>
-            <Save className="h-4 w-4 mr-2" />
-            Zapisz zmiany
-          </Button>
-        </CardFooter>
-      </Card>
-
-      {/* Steps card */}
-      <Card>
-        <CardHeader>
-          <div className="flex items-start justify-between">
-            <div>
-              <CardTitle>Kroki</CardTitle>
-              <CardDescription>
-                Przeglądaj i edytuj kroki w ścieżce
-              </CardDescription>
+      {/* Dwie kolumny: po lewej informacje, po prawej kroki */}
+      <div className="grid md:grid-cols-2 gap-8">
+        {/* Podstawowe informacje */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Podstawowe informacje</CardTitle>
+            <CardDescription>
+              Edytuj główne informacje o ścieżce celów
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="title">Nazwa ścieżki</Label>
+              <Input
+                id="title"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                placeholder="Wprowadź nazwę ścieżki..."
+              />
             </div>
-            <Badge variant="outline">{template.steps.length} kroków</Badge>
-          </div>
-        </CardHeader>
+            <div className="space-y-2">
+              <Label htmlFor="description">Opis</Label>
+              <Textarea
+                id="description"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                placeholder="Wprowadź opis ścieżki..."
+                rows={4}
+              />
+            </div>
+          </CardContent>
+          <CardFooter className="flex justify-between">
+            <div className="flex flex-wrap gap-2">
+              {template.requiredCategories.map((category: string) => (
+                <Badge key={category} variant="secondary">
+                  {category}
+                </Badge>
+              ))}
+            </div>
+            <Button onClick={handleSave}>
+              <Save className="h-4 w-4 mr-2" />
+              Zapisz zmiany
+            </Button>
+          </CardFooter>
+        </Card>
 
-        <Separator className="mb-6" />
+        {/* Kroki */}
+        <Card>
+          <CardHeader>
+            <div className="flex items-start justify-between">
+              <div>
+                <CardTitle>Kroki</CardTitle>
+                <CardDescription>
+                  Przeglądaj i edytuj kroki w ścieżce
+                </CardDescription>
+              </div>
+              <Badge variant="outline">{template.steps.length} kroków</Badge>
+            </div>
+          </CardHeader>
 
-        <CardContent>
-          <StepManager
-            steps={template.steps.map((step: GoalStep) => ({
-              ...step,
-              isCompleted: false, // Adding the required isCompleted property
-            }))}
-            onComplete={() => {
-              console.log("Goal editing completed!");
-            }}
-          />
-        </CardContent>
-      </Card>
+          <Separator className="mb-6" />
+
+          <CardContent>
+            <StepManager
+              steps={template.steps.map((step: GoalStep) => ({
+                ...step,
+                isCompleted: false, // dodajemy isCompleted, jeśli komponent StepManager tego wymaga
+              }))}
+              onComplete={() => {
+                console.log("Goal editing completed!");
+              }}
+            />
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }

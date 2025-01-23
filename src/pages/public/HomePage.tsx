@@ -1,81 +1,112 @@
-// src/pages/public/HomePage.tsx
+// File: src/pages/HomePage.jsx
 
+import { GoalPathwayChart } from "@/components/homepage/GoalPathwayChart";
 import { Button } from "@/components/ui/button";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import {
-  Card,
-  CardHeader,
-  CardContent,
-  CardFooter,
-} from "@/components/ui/card";
-import { Badge } from "lucide-react";
+  FileText,
+  Folder,
+  Target,
+  Shield,
+  BarChart2,
+  Circle,
+  Key,
+  Rocket,
+  File as FileIcon,
+} from "lucide-react";
 
-export default function HomePage() {
+const HomePage = () => {
+  const icons = [Circle, FileIcon, Rocket, BarChart2, Key];
+
   return (
-    <div className="flex flex-col gap-8 p-8">
-      <section className="text-center my-32">
-        <h1 className="text-5xl font-extrabold tracking-tight mb-4">
-          Welcome to the Wizard RAG System
+    <div className="container mx-auto space-y-16 px-6 py-16">
+      <header className="mx-auto max-w-2xl text-center space-y-4">
+        <h1 className="text-5xl font-bold tracking-tight">
+          Goal Pathway System
         </h1>
-        <p className="text-lg text-gray-600 mb-6">
-          Manage documents and categories effectively through innovative wizard-based workflows.
+        <p className="text-lg text-muted-foreground">
+          Organize your documents and dynamically expand context with structured
+          pathways.
         </p>
-        <div className="flex justify-center gap-4">
-          <Button size="lg">Get Started</Button>
-          <Button variant="secondary" size="lg">
-            Learn More
-          </Button>
-        </div>
+        <Button size="lg" className="mt-4">
+          Get Started
+        </Button>
+      </header>
+
+      <section className="grid gap-8 md:grid-cols-2">
+        <Card className="shadow-md hover:shadow-lg transition-shadow">
+          <CardHeader>
+            <CardTitle className="text-2xl">What is the Goal Pathway System?</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-muted-foreground mb-6 leading-relaxed">
+              This platform enables you to build structured goal pathways that
+              expand categorized document structures, ensuring seamless
+              knowledge progression towards your objectives.
+            </p>
+            <GoalPathwayChart icons={icons} />
+          </CardContent>
+        </Card>
+
+        <Card className="shadow-md hover:shadow-lg transition-shadow">
+          <CardHeader>
+            <CardTitle className="text-2xl">Features</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ul className="space-y-6 text-muted-foreground">
+              <li className="flex items-start space-x-3">
+                <FileText className="w-5 h-5 mt-1" />
+                <div>
+                  <strong>Document Management</strong>
+                  <p className="leading-relaxed">
+                    Create, edit, and categorize documents to keep everything at your fingertips.
+                  </p>
+                </div>
+              </li>
+              <li className="flex items-start space-x-3">
+                <Folder className="w-5 h-5 mt-1" />
+                <div>
+                  <strong>Hierarchical Categorization</strong>
+                  <p className="leading-relaxed">
+                    Allows logical organization and quick access to files.
+                  </p>
+                </div>
+              </li>
+              <li className="flex items-start space-x-3">
+                <Target className="w-5 h-5 mt-1" />
+                <div>
+                  <strong>Dynamic Goal Pathways</strong>
+                  <p className="leading-relaxed">
+                    Expand context and support efficient pursuit of objectives.
+                  </p>
+                </div>
+              </li>
+              <li className="flex items-start space-x-3">
+                <Shield className="w-5 h-5 mt-1" />
+                <div>
+                  <strong>Secure Authentication</strong>
+                  <p className="leading-relaxed">
+                    Ensures protected access to accounts and data.
+                  </p>
+                </div>
+              </li>
+            </ul>
+          </CardContent>
+        </Card>
       </section>
 
-      <section className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Card className="shadow-lg">
-          <CardHeader>
-            <h2 className="text-2xl font-bold">Document Management</h2>
-          </CardHeader>
-          <CardContent>
-            <p>
-              Create, edit, and organize documents seamlessly in structured categories.
-            </p>
-          </CardContent>
-          <CardFooter>
-            <Button variant="link">Discover More</Button>
-          </CardFooter>
-        </Card>
-
-        <Card className="shadow-lg">
-          <CardHeader>
-            <h2 className="text-2xl font-bold">Wizard Workflows</h2>
-          </CardHeader>
-          <CardContent>
-            <p>
-              Build step-by-step processes linking documents and categories for efficient knowledge retrieval.
-            </p>
-          </CardContent>
-          <CardFooter>
-            <Button variant="link">View Examples</Button>
-          </CardFooter>
-        </Card>
-
-        <Card className="shadow-lg">
-          <CardHeader>
-            <h2 className="text-2xl font-bold">User Authentication</h2>
-          </CardHeader>
-          <CardContent>
-            <p>
-              Secure your platform with Google login and Firebase Authentication.
-            </p>
-          </CardContent>
-          <CardFooter>
-            <Button variant="link">Read More</Button>
-          </CardFooter>
-        </Card>
-      </section>
-
-      <section className="text-center mt-10">
-        <Badge className="text-lg px-4 py-2">
-          Trusted by Thousands of Users Worldwide
-        </Badge>
+      <section className="mx-auto max-w-2xl text-center space-y-4">
+        <h2 className="text-3xl font-semibold">Start Your Journey</h2>
+        <p className="text-muted-foreground leading-relaxed">
+          Streamline your workflow today. Sign up, organize your documents, and
+          build pathways to success.
+        </p>
+        <Button size="lg" className="mt-4">
+          Sign Up Now
+        </Button>
       </section>
     </div>
   );
-}
+};
+
+export default HomePage;
