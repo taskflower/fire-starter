@@ -28,8 +28,8 @@ export function StepContent() {
 
   return (
     <div className="space-y-4">
-      <div className="space-y-2">
-        <h3 className="text-lg font-black">{step.title}</h3>
+      <div className="space-y-1.5">
+        <h3 className="text-2xl font-black">{step.title}</h3>
         {step.description && (
           <p className="text-sm text-muted-foreground">{step.description}</p>
         )}

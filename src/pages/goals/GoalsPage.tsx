@@ -4,9 +4,10 @@ import { StepNavigation } from "@/components/goals/StepNavigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Separator } from "@/components/ui/separator";
 import { useGoalTemplates } from "@/hooks/useGoalTemplates";
 import { useGoalStore } from "@/store/useGoalStore";
-import { Separator } from "@radix-ui/react-dropdown-menu";
+
 
 import { Plus, Edit, Trash2 } from "lucide-react";
 import { useState, useEffect } from "react";
@@ -62,7 +63,7 @@ export default function GoalsPage() {
           <CardDescription>Choose a predefined template or create your own</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="flex gap-4 items-center">
+          <div className="flex gap-4 items-center mt-3">
             <Select
               value={selectedTemplateId}
               onValueChange={(value) => {
@@ -106,7 +107,7 @@ export default function GoalsPage() {
         <Card>
           <CardHeader>
             <div className="flex items-start justify-between">
-              <div>
+              <div className="space-y-1.5">
                 <CardTitle>{selectedTemplate.title}</CardTitle>
                 <CardDescription>{selectedTemplate.description}</CardDescription>
               </div>
