@@ -12,6 +12,9 @@ import {
 import { DocumentForm } from "./forms/DocumentForm";
 import { QuestionsForm } from "./forms/QuestionsForm";
 import { LLMForm } from "./forms/LLMForm";
+import { InsertForm } from "./forms/InsertForm";
+import { ServicesForm } from "./forms/ServicesForm";
+
 import { Step, StepType } from "@/types/goals";
 import { useGoalStore } from "@/store/useGoalStore";
 
@@ -70,7 +73,7 @@ export function StepDialog({ open, onOpenChange, step }: StepDialogProps) {
         </DialogHeader>
 
         <div className="space-y-4 py-4 flex gap-4 w-full">
-          <div className="flex-1">
+          <div className="flex-1 space-y-2">
             <div className="space-y-2">
               <Label>Step Type</Label>
               <Select
@@ -83,9 +86,11 @@ export function StepDialog({ open, onOpenChange, step }: StepDialogProps) {
                   <SelectValue placeholder="Select step type..." />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="document_selection">Document Selection</SelectItem>
+                <SelectItem value="document_selection">Document Selection</SelectItem>
                   <SelectItem value="questions">Questions</SelectItem>
                   <SelectItem value="llm_processing">LLM Processing</SelectItem>
+                  <SelectItem value="services">Services</SelectItem>
+                  <SelectItem value="insert">Insert</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -114,7 +119,9 @@ export function StepDialog({ open, onOpenChange, step }: StepDialogProps) {
               {stepFormData.type === "document_selection" && <DocumentForm />}
               {stepFormData.type === "questions" && <QuestionsForm />}
               {stepFormData.type === "llm_processing" && <LLMForm />}
-            </div>
+              {stepFormData.type === "insert" && <InsertForm />}
+              {stepFormData.type === "services" && <ServicesForm />}
+            </div>  
           )}
         </div>
 

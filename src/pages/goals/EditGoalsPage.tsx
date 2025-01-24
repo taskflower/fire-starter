@@ -3,11 +3,12 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useGoalTemplates } from "@/hooks/useGoalTemplates";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Save, ArrowLeft } from "lucide-react";
+import { Save, ArrowLeft, Goal } from "lucide-react";
 import { useGoalStore } from "@/store/useGoalStore";
 import { BasicInformation } from "@/components/goals/edit/forms/BasicInformation";
 import { StepsList } from "@/components/goals/edit/StepsList";
 import type { GoalTemplate } from "@/types/goals";
+import MainTitle from "@/layouts/MainTitle";
 
 export default function EditGoalsPage() {
   const { id } = useParams<{ id: string }>();
@@ -33,9 +34,17 @@ export default function EditGoalsPage() {
       setOnCompleteAction(currentTemplate.onCompleteAction || { type: "none" });
       setSteps(currentTemplate.steps);
     }
-    
+
     return () => resetStore();
-  }, [id, templates, setTitle, setDescription, setOnCompleteAction, setSteps, resetStore]);
+  }, [
+    id,
+    templates,
+    setTitle,
+    setDescription,
+    setOnCompleteAction,
+    setSteps,
+    resetStore,
+  ]);
 
   const handleSave = async () => {
     if (!id) return;
@@ -64,12 +73,12 @@ export default function EditGoalsPage() {
   return (
     <div className="container mx-auto py-8 space-y-8">
       <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-3xl font-bold">Edit Goal</h1>
-          <p className="text-muted-foreground mt-2">
-            Edit goal details and define steps.
-          </p>
-        </div>
+        <MainTitle
+          title={`Edit Goal`}
+          icon={Goal}
+          description="Edit your goal here."
+        />
+
         <Button variant="ghost" onClick={() => navigate("/admin/goals")}>
           <ArrowLeft className="h-4 w-4 mr-2" /> Back
         </Button>

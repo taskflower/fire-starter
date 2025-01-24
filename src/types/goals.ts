@@ -1,7 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // src/types/goals.ts
 
-export type StepType = "document_selection" | "questions" | "llm_processing";
+export type StepType =
+  | "document_selection"
+  | "questions"
+  | "llm_processing"
+  | "services"
+  | "insert";
 
 export interface BaseDocument {
   id: string;
@@ -23,6 +28,8 @@ export interface StepConfig {
   documentRequirements?: DocumentRequirement[];
   questions?: Question[];
   llmPrompt?: string;
+  services: string[];
+  insert?: string[];
   validationRules?: ValidationRules;
   includeSteps?: string[];
 }

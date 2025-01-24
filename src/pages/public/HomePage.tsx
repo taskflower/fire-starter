@@ -14,6 +14,7 @@ import {
   Rocket,
   File as FileIcon,
 } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const HomePage = () => {
   const icons = [Circle, FileIcon, Rocket, BarChart2, Key];
@@ -22,15 +23,19 @@ const HomePage = () => {
     <div className="container mx-auto space-y-16 px-6 py-16">
       <header className="mx-auto max-w-2xl text-center space-y-4">
         <h1 className="text-5xl font-bold tracking-tight">
-          Goals Pathway
+          full MARKETING path
         </h1>
         <p className="text-lg text-muted-foreground">
-          Organize your documents and dynamically expand context with structured
+          Organize your ads documents and dynamically expand context with structured
           pathways.
         </p>
-        <Button size="lg" className="mt-4">
-          Get Started
-        </Button>
+        {/* /admin/dashboard */}
+        
+        <Button size="lg" className="mt-4" >
+              <Link to="admin/goals">
+              Get Started
+              </Link>
+            </Button>
       </header>
 
       <section className="grid gap-8 md:grid-cols-2">

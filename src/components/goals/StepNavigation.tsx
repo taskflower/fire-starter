@@ -1,27 +1,22 @@
-// src/components/goals/StepNavigation.tsx
+import { useGoalStore } from "@/store/useGoalStore";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { useGoalStore } from "@/store/useGoalStore";
 import { StepProgress } from "./StepProgress";
-
-interface StepNavigationProps {
-  canGoBack: boolean;
-  canGoForward: boolean;
-  onComplete?: () => void;
-}
 
 export function StepNavigation({
   canGoBack,
   canGoForward,
-  onComplete,
-}: StepNavigationProps) {
-  const { moveToNextStep, moveToPreviousStep } = useGoalStore();
+}: {
+  canGoBack: boolean;
+  canGoForward: boolean;
+}) {
+  const { moveToNextStep, moveToPreviousStep, onCompleteAction, currentStepIndex, steps } = useGoalStore();
+  const isSummaryNext = onCompleteAction?.type === "summary" && currentStepIndex === steps.length - 1;
+  const showingSummary = currentStepIndex === steps.length;
 
   const handleNext = () => {
-    if (canGoForward) {
+    if (isSummaryNext || canGoForward) {
       moveToNextStep();
-    } else {
-      onComplete?.();
     }
   };
 
@@ -36,8 +31,11 @@ export function StepNavigation({
         Poprzedni krok
       </Button>
       <StepProgress />
-      <Button onClick={handleNext}>
-        {!canGoForward ? "Zakończ" : "Następny krok"}
+      <Button 
+        onClick={handleNext}
+        disabled={showingSummary}
+      >
+        {showingSummary ? "Zakończ" : "Następny krok"}
         {canGoForward && <ChevronRight className="ml-2 h-4 w-4" />}
       </Button>
     </div>

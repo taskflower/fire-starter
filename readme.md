@@ -123,3 +123,7 @@ firebase init
 firebase deploy --only firestore:indexes
 
 To są strony zarządzania procesem celów. Odpowiadaj jednym zdaniem po polsku. Bedę chciał opracować nad kodem, staraj się pokazywać kompletny plik. Zawsze gdy bedziesz widział odoniesienia do istniejących zasobów to zamiast wymyslać kod po swojemu pytaj się i istniejące zasoby. Pokazując kod informuj jaka scierka do niego prowadzi.
+
+
+
+Chcemy stworzyć widok, który umożliwi kliknięcie na nazwę firmy w kategorii "Opis podmiotów", aby wyświetlić powiązane dokumenty w kategoriach "Grupy docelowe" i "Analiza konkurencji". Dodatkowo dodamy funkcję edytowania tych powiązań, aby umożliwić dynamiczne zarządzanie zależnościami.

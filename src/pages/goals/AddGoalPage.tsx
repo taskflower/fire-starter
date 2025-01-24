@@ -3,11 +3,12 @@ import { useNavigate } from "react-router-dom";
 import { useGoalTemplates } from "@/hooks/useGoalTemplates";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Save, ArrowLeft } from "lucide-react";
+import { Save, ArrowLeft, Goal } from "lucide-react";
 import { useGoalStore } from "@/store/useGoalStore";
 import { BasicInformation } from "@/components/goals/edit/forms/BasicInformation";
 import { StepsList } from "@/components/goals/edit/StepsList";
 import type { CreateGoalTemplateDTO } from "@/types/goals";
+import MainTitle from "@/layouts/MainTitle";
 
 export default function AddGoalPage() {
   const navigate = useNavigate();
@@ -52,12 +53,14 @@ export default function AddGoalPage() {
   return (
     <div className="container mx-auto py-8 space-y-8">
       <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-3xl font-bold">Add New Goal</h1>
-          <p className="text-muted-foreground mt-2">
-            Fill in the goal details and define the steps.
-          </p>
-        </div>
+        
+
+        <MainTitle
+          title={`Add New Goal`}
+          icon={Goal}
+          description="Fill in the goal details and define the steps."
+        />
+
         <Button variant="ghost" onClick={() => navigate("/admin/goals")}>
           <ArrowLeft className="h-4 w-4 mr-2" /> Back
         </Button>

@@ -16,7 +16,7 @@ export const AdminLayout = () => {
   }
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col select-none">
       <Navbar /> {/* Dodano Navbar na górze */}
       <div className="flex flex-grow">
         <AdminSidebar />

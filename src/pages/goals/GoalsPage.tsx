@@ -2,14 +2,34 @@ import StepsDataViewer from "@/components/goals/stateDataDialog/StepsDataViewer"
 import { StepManager } from "@/components/goals/StepManager";
 import { StepNavigation } from "@/components/goals/StepNavigation";
 import { Button } from "@/components/ui/button";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+  CardFooter,
+} from "@/components/ui/card";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
+import {
+  TableHeader,
+  TableRow,
+  TableHead,
+  TableBody,
+  TableCell,
+} from "@/components/ui/table";
 import { useGoalTemplates } from "@/hooks/useGoalTemplates";
+import MainTitle from "@/layouts/MainTitle";
 import { useGoalStore } from "@/store/useGoalStore";
 
-
-import { Plus, Edit, Trash2 } from "lucide-react";
+import { Plus, Edit, Trash2, Goal, Table } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 
@@ -19,48 +39,66 @@ export default function GoalsPage() {
   const navigate = useNavigate();
   const { templates, deleteTemplate } = useGoalTemplates();
   const [selectedTemplateId, setSelectedTemplateId] = useState<string>("");
-  const { setTitle, setDescription, setOnCompleteAction, setSteps, currentStepIndex, steps } = useGoalStore();
- 
+  const {
+    setTitle,
+    setDescription,
+    setOnCompleteAction,
+    setSteps,
+    currentStepIndex,
+    steps,
+  } = useGoalStore();
+
   useEffect(() => {
     if (id) {
-      const template = templates.find(t => t.id === id);
+      const template = templates.find((t) => t.id === id);
       if (template) {
         setSelectedTemplateId(id);
         setTitle(template.title);
         setDescription(template.description);
         setOnCompleteAction(template.onCompleteAction);
-        setSteps(template.steps.map(step => ({
-          ...step,
-          isCompleted: false,
-        })));
+        setSteps(
+          template.steps.map((step) => ({
+            ...step,
+            isCompleted: false,
+          }))
+        );
       } else {
-        navigate('/admin/goals');
+        navigate("/admin/goals");
       }
     }
-  }, [id, templates, navigate, setTitle, setDescription, setOnCompleteAction, setSteps]);
- 
+  }, [
+    id,
+    templates,
+    navigate,
+    setTitle,
+    setDescription,
+    setOnCompleteAction,
+    setSteps,
+  ]);
+
   const handleTemplateDelete = async () => {
     if (!selectedTemplateId) return;
     await deleteTemplate(selectedTemplateId);
     setSelectedTemplateId("");
     navigate("/admin/goals");
   };
- 
+
   const selectedTemplate = templates.find((t) => t.id === selectedTemplateId);
- 
+
   return (
     <div className="container mx-auto py-8 space-y-8">
-      <div>
-        <h1 className="text-3xl font-bold">My Goals</h1>
-        <p className="text-muted-foreground mt-2">
-          Select a template and start working with LLM
-        </p>
-      </div>
- 
+      <MainTitle
+        title={`My Goals`}
+        icon={Goal}
+        description="Select a template and start working with LLM"
+      />
+
       <Card className="flex items-center justify-between">
         <CardHeader>
           <CardTitle>Select a Goal Template</CardTitle>
-          <CardDescription>Choose a predefined template or create your own</CardDescription>
+          <CardDescription>
+            Choose a predefined template or create your own
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="flex gap-4 items-center mt-3">
@@ -81,15 +119,20 @@ export default function GoalsPage() {
                 ))}
               </SelectContent>
             </Select>
- 
+
             <Button onClick={() => navigate("/admin/goal/new")}>
               <Plus className="h-4 w-4 mr-2" />
               New Goal
             </Button>
- 
+
             {selectedTemplateId && (
               <>
-                <Button variant="outline" onClick={() => navigate(`/admin/goal/${selectedTemplateId}/edit`)}>
+                <Button
+                  variant="outline"
+                  onClick={() =>
+                    navigate(`/admin/goal/${selectedTemplateId}/edit`)
+                  }
+                >
                   <Edit className="h-4 w-4 mr-2" />
                   Edit
                 </Button>
@@ -102,25 +145,54 @@ export default function GoalsPage() {
           </div>
         </CardContent>
       </Card>
- 
+
+      <div className="rounded-md border">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Title</TableHead>
+              <TableHead>Description</TableHead>
+              <TableHead>Steps Count</TableHead>
+              <TableHead>Status</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {templates.map((template) => (
+              <TableRow
+                key={template.id}
+                className="cursor-pointer hover:bg-muted/50"
+                onClick={() => navigate(`/admin/goals/${template.id}`)}
+              >
+                <TableCell className="font-medium">{template.title}</TableCell>
+                <TableCell>{template.description}</TableCell>
+                <TableCell>{template.steps.length}</TableCell>
+                {/* <TableCell>{template.onCompleteAction}</TableCell> */}
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
+
       {selectedTemplate && (
         <Card>
           <CardHeader>
             <div className="flex items-start justify-between">
               <div className="space-y-1.5">
                 <CardTitle>{selectedTemplate.title}</CardTitle>
-                <CardDescription>{selectedTemplate.description}</CardDescription>
+                <CardDescription>
+                  {selectedTemplate.description}
+                </CardDescription>
               </div>
               <StepsDataViewer />
             </div>
           </CardHeader>
- 
+
           <Separator className="mb-6" />
- 
+
           <CardContent>
             <StepManager />
           </CardContent>
- 
+
           <CardFooter className="bg-muted/50">
             <StepNavigation
               canGoBack={currentStepIndex > 0}
@@ -131,4 +203,4 @@ export default function GoalsPage() {
       )}
     </div>
   );
- }
+}

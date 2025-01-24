@@ -7,6 +7,7 @@ import { categoryRoutes } from "./pages/categories/routes";
 import publicRoutes from "@/pages/public/routes";
 import adminRoutes from "@/pages/admin/routes";
 import goalsRoutes from "@/pages/goals/routes";
+import relationsRoutes from "@/pages/relations/routes";
 
 
 export const routes: RouteObject[] = [
@@ -25,7 +26,8 @@ export const routes: RouteObject[] = [
       ...adminRoutes, // Trasy admina
       ...documentRoutes, // Trasy dokumentów w układzie admina
       ...categoryRoutes,
-      ...goalsRoutes
+      ...goalsRoutes,
+      ...relationsRoutes
     ],
   },
 ];
