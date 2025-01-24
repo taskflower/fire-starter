@@ -3,7 +3,7 @@ import { useDocuments } from '@/hooks/useDocuments';
 import { useGoalStore } from '@/store/useGoalStore';
 import { Checkbox } from '@/components/ui/checkbox';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { StepConfig } from '../types';
+import { StepConfig } from '@/types/goals';
 
 interface DocumentSelectorProps {
   config: StepConfig;
@@ -28,7 +28,7 @@ export function DocumentSelector({ config, stepId }: DocumentSelectorProps) {
   };
 
   return (
-    <ScrollArea className="h-[400px]">
+    <ScrollArea className="min-h-50">
       <div className="space-y-4">
         {relevantDocuments.map((doc) => (
           <div key={doc.id} className="flex items-start space-x-3 p-3 hover:bg-muted/50 rounded-lg">

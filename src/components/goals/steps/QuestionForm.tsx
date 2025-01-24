@@ -4,7 +4,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useGoalStore } from '@/store/useGoalStore';
-import { StepConfig } from '../types';
+import { StepConfig } from '@/types/goals';
+
 
 interface QuestionFormProps {
   config: StepConfig;

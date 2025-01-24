@@ -1,17 +1,15 @@
-import { StepConfig, Question } from '@/components/newgoals/types';
+// QuestionsForm.tsx
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Plus, X } from 'lucide-react';
 import { useState } from 'react';
+import { Question } from '@/types/goals';
+import { useGoalStore } from '@/store/useGoalStore';
 
-interface QuestionsFormProps {
-  config?: StepConfig;
-  onChange: (config: StepConfig) => void;
-}
-
-export function QuestionsForm({ config = {}, onChange }: QuestionsFormProps) {
+export function QuestionsForm() {
+  const { stepFormData, setStepFormData } = useGoalStore();
   const [isAddingQuestion, setIsAddingQuestion] = useState(false);
   const [newQuestion, setNewQuestion] = useState<Partial<Question>>({
     type: 'text',
@@ -29,23 +27,30 @@ export function QuestionsForm({ config = {}, onChange }: QuestionsFormProps) {
       required: newQuestion.required ?? true
     };
 
-    onChange({
-      ...config,
-      questions: [...(config.questions || []), question]
+    setStepFormData({
+      config: {
+        ...stepFormData.config,
+        questions: [...(stepFormData.config?.questions || []), question]
+      }
     });
     setNewQuestion({ type: 'text', question: '', required: true });
     setIsAddingQuestion(false);
   };
 
   const removeQuestion = (index: number) => {
-    const newQuestions = config.questions?.filter((_, i) => i !== index) || [];
-    onChange({ ...config, questions: newQuestions });
+    const newQuestions = stepFormData.config?.questions?.filter((_, i) => i !== index) || [];
+    setStepFormData({
+      config: {
+        ...stepFormData.config,
+        questions: newQuestions
+      }
+    });
   };
 
   return (
     <div className="space-y-4">
       <div className="space-y-2">
-        {config.questions?.map((q, index) => (
+        {stepFormData.config?.questions?.map((q, index) => (
           <div key={q.id} className="flex items-center gap-2 p-2 border rounded">
             <div className="flex-1">
               <p className="font-medium">{q.question}</p>

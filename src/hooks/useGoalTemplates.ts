@@ -16,7 +16,6 @@ export const useGoalTemplates = (): UseGoalTemplatesReturn => {
         const data = await templateService.getAll();
         const sanitizedData = data.map(template => ({
           ...template,
-          requiredCategories: template.requiredCategories || [],
         }));
         setTemplates(sanitizedData);
       } catch (err) {

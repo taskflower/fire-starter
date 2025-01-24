@@ -121,3 +121,5 @@ npx shadcn@latest add button
 
 firebase init
 firebase deploy --only firestore:indexes
+
+To są strony zarządzania procesem celów. Odpowiadaj jednym zdaniem po polsku. Bedę chciał opracować nad kodem, staraj się pokazywać kompletny plik. Zawsze gdy bedziesz widział odoniesienia do istniejących zasobów to zamiast wymyslać kod po swojemu pytaj się i istniejące zasoby. Pokazując kod informuj jaka scierka do niego prowadzi.

@@ -1,21 +1,28 @@
-import { useState } from "react";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useGoalTemplates } from "@/hooks/useGoalTemplates";
-import { Step } from "@/components/newgoals/types";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
+import { Card, CardContent } from "@/components/ui/card";
 import { Save, ArrowLeft } from "lucide-react";
-import { StepsList } from "@/components/newgoals/edit/StepsList";
+import { useGoalStore } from "@/store/useGoalStore";
+import { BasicInformation } from "@/components/goals/edit/forms/BasicInformation";
+import { StepsList } from "@/components/goals/edit/StepsList";
+import type { CreateGoalTemplateDTO } from "@/types/goals";
 
 export default function AddGoalPage() {
   const navigate = useNavigate();
   const { addTemplate } = useGoalTemplates();
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [steps, setSteps] = useState<Step[]>([]);
+  const { 
+    title, 
+    description, 
+    onCompleteAction, 
+    steps,
+    resetStore 
+  } = useGoalStore();
+
+  useEffect(() => {
+    return () => resetStore();
+  }, [resetStore]);
 
   const handleSave = async () => {
     if (!title.trim()) {
@@ -23,19 +30,14 @@ export default function AddGoalPage() {
       return;
     }
 
-    const formattedSteps = steps.map((step, index) => ({
-      ...step,
-      order: index,
-    }));
-
-    const newTemplate = {
+    const newTemplate: CreateGoalTemplateDTO = {
       title,
       description,
-      steps: formattedSteps,
+      onCompleteAction,
+      steps,
+      status: "draft",
       createdAt: new Date(),
-      updatedAt: new Date(),
-      requiredCategories: [],
-      status: "draft" as const,
+      updatedAt: new Date()
     };
 
     try {
@@ -52,46 +54,20 @@ export default function AddGoalPage() {
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-bold">Add New Goal</h1>
-          <p className="text-muted-foreground mt-2">Fill in the goal details and define the steps.</p>
+          <p className="text-muted-foreground mt-2">
+            Fill in the goal details and define the steps.
+          </p>
         </div>
-        <Button variant="ghost" onClick={() => navigate("/admin/goals")}> 
+        <Button variant="ghost" onClick={() => navigate("/admin/goals")}>
           <ArrowLeft className="h-4 w-4 mr-2" /> Back
         </Button>
       </div>
 
       <div className="grid grid-cols-2 gap-8">
-        <Card>
-          <CardHeader>
-            <CardTitle>Basic Information</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div>
-              <Label htmlFor="title">Goal Name</Label>
-              <Input
-                id="title"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                placeholder="Enter goal name..."
-                required
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="description">Description</Label>
-              <Textarea
-                id="description"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                placeholder="Enter goal description..."
-                rows={4}
-              />
-            </div>
-          </CardContent>
-        </Card>
-
+        <BasicInformation />
         <Card>
           <CardContent className="pt-6">
-            <StepsList steps={steps} onStepsChange={setSteps} />
+            <StepsList />
           </CardContent>
         </Card>
       </div>

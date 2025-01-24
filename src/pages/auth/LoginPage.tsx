@@ -19,7 +19,7 @@ const LoginPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center ">
+    <div className="min-h-96 flex items-center justify-center ">
       <Card className="max-w-md w-full shadow-lg">
         <CardHeader className="text-center">
           <h1 className="text-3xl font-extrabold mb-2">Welcome Back</h1>

@@ -1,27 +1,24 @@
-import { StepConfig } from "@/components/newgoals/types";
+// LLMForm.tsx
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useGoalStore } from "@/store/useGoalStore";
 
-interface LLMFormProps {
-  config?: StepConfig;
-  onChange: (config: StepConfig) => void;
-}
-
-export function LLMForm({ config = {}, onChange }: LLMFormProps) {
-  const { steps } = useGoalStore();
-  const selectedSteps = config.includeSteps || [];
+export function LLMForm() {
+  const { steps, stepFormData, setStepFormData } = useGoalStore();
+  const selectedSteps = stepFormData.config?.includeSteps || [];
 
   const handleStepSelect = (stepId: string) => {
     const newSelectedSteps = selectedSteps.includes(stepId)
       ? selectedSteps.filter((id) => id !== stepId)
       : [...selectedSteps, stepId];
 
-    onChange({
-      ...config,
-      includeSteps: newSelectedSteps,
+    setStepFormData({
+      config: {
+        ...stepFormData.config,
+        includeSteps: newSelectedSteps,
+      }
     });
   };
 
@@ -48,8 +45,13 @@ export function LLMForm({ config = {}, onChange }: LLMFormProps) {
       <div className="space-y-2">
         <Label>LLM Prompt</Label>
         <Textarea
-          value={config.llmPrompt || ""}
-          onChange={(e) => onChange({ ...config, llmPrompt: e.target.value })}
+          value={stepFormData.config?.llmPrompt || ""}
+          onChange={(e) => setStepFormData({
+            config: {
+              ...stepFormData.config,
+              llmPrompt: e.target.value
+            }
+          })}
           placeholder="Enter prompt for LLM processing..."
           rows={6}
         />
