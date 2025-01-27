@@ -3,12 +3,12 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useGoalTemplates } from "@/hooks/useGoalTemplates";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Save, ArrowLeft, Goal } from "lucide-react";
-import { useGoalStore } from "@/store/useGoalStore";
-import { BasicInformation } from "@/components/goals/edit/forms/BasicInformation";
-import { StepsList } from "@/components/goals/edit/StepsList";
+import { Save, Goal } from "lucide-react";
+import { useGoalManagementStore } from "@/store/useGoalManagementStore";
+import { BasicInformation } from "@/components/goals/templates/edit/forms/BasicInformation";
 import type { GoalTemplate } from "@/types/goals";
-import MainTitle from "@/layouts/MainTitle";
+import AdminOutletTemplate from "@/layouts/AdminOutletTemplate";
+import { StepsList } from "@/components/goals/templates/edit/StepsList";
 
 export default function EditGoalsPage() {
   const { id } = useParams<{ id: string }>();
@@ -24,7 +24,7 @@ export default function EditGoalsPage() {
     setOnCompleteAction,
     setSteps,
     resetStore,
-  } = useGoalStore();
+  } = useGoalManagementStore();
 
   useEffect(() => {
     const currentTemplate = templates.find((t) => t.id === id);
@@ -71,33 +71,25 @@ export default function EditGoalsPage() {
   }
 
   return (
-    <div className="container mx-auto py-8 space-y-8">
-      <div className="flex justify-between items-center">
-        <MainTitle
-          title={`Edit Goal`}
-          icon={Goal}
-          description="Edit your goal here."
-        />
-
-        <Button variant="ghost" onClick={() => navigate("/admin/goals")}>
-          <ArrowLeft className="h-4 w-4 mr-2" /> Back
+    <AdminOutletTemplate
+      title="Edit Goal"
+      icon={Goal}
+      description="Edit your goal here."
+      backPath="/admin/goals"
+      actions={
+        <Button onClick={handleSave}>
+          <Save className="h-4 w-4 mr-2" /> Save Goal
         </Button>
-      </div>
-
+      }
+    >
       <div className="grid grid-cols-2 gap-8">
         <BasicInformation />
-        <Card>
-          <CardContent className="pt-6">
+          <Card>
+            <CardContent className="pt-6">
             <StepsList />
           </CardContent>
         </Card>
       </div>
-
-      <div className="flex justify-end">
-        <Button onClick={handleSave}>
-          <Save className="h-4 w-4 mr-2" /> Save Goal
-        </Button>
-      </div>
-    </div>
+    </AdminOutletTemplate>
   );
 }

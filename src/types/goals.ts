@@ -14,6 +14,12 @@ export interface BaseDocument {
   updatedAt: Date;
 }
 
+export interface Service {
+  name: string;
+  endpoint: string;
+  sourceStepIds: string[];
+}
+
 export interface Step {
   id: string;
   type: StepType;
@@ -28,10 +34,13 @@ export interface StepConfig {
   documentRequirements?: DocumentRequirement[];
   questions?: Question[];
   llmPrompt?: string;
-  services: string[];
+  services: Service[];
   insert?: string[];
   validationRules?: ValidationRules;
   includeSteps?: string[];
+  serviceName?: string;        // Dodane
+  serviceEndpoint?: string;    // Dodane
+  selectedSteps?: string[];    // Dodane
 }
 
 export interface ValidationRules {
@@ -110,7 +119,27 @@ export interface UseGoalTemplatesReturn {
   deleteTemplate: (id: string) => Promise<void>;
   getTemplateById: (id: string) => Promise<GoalTemplate | null>;
 }
+
 export interface GoalStore {
   currentStepIndex: number;
   initializeSteps: (steps: Step[]) => void;
+}
+
+export interface GoalExecution extends BaseDocument {
+  templateId: string;
+  stepsData: Record<string, StepData>;
+  currentStepIndex: number;
+  startedAt: Date;
+  completedAt?: Date;
+  status: 'in_progress' | 'completed' | 'abandoned';
+}
+
+export type CreateGoalExecutionDTO = {
+  templateId: string;
+  stepsData: Record<string, StepData>;
+  currentStepIndex: number;
+  startedAt: Date;
+  status: 'in_progress' | 'completed' | 'abandoned';
+  createdAt: Date;
+  updatedAt: Date;
 }

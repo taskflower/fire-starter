@@ -3,12 +3,12 @@ import { useNavigate } from "react-router-dom";
 import { useGoalTemplates } from "@/hooks/useGoalTemplates";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Save, ArrowLeft, Goal } from "lucide-react";
-import { useGoalStore } from "@/store/useGoalStore";
-import { BasicInformation } from "@/components/goals/edit/forms/BasicInformation";
-import { StepsList } from "@/components/goals/edit/StepsList";
+import { Save, Goal } from "lucide-react";
+import { useGoalManagementStore } from "@/store/useGoalManagementStore";
+import { BasicInformation } from "@/components/goals/templates/edit/forms/BasicInformation";
 import type { CreateGoalTemplateDTO } from "@/types/goals";
-import MainTitle from "@/layouts/MainTitle";
+import AdminOutletTemplate from "@/layouts/AdminOutletTemplate";
+import { StepsList } from "@/components/goals/templates/edit/StepsList";
 
 export default function AddGoalPage() {
   const navigate = useNavigate();
@@ -19,7 +19,7 @@ export default function AddGoalPage() {
     onCompleteAction, 
     steps,
     resetStore 
-  } = useGoalStore();
+  } = useGoalManagementStore();
 
   useEffect(() => {
     return () => resetStore();
@@ -31,7 +31,7 @@ export default function AddGoalPage() {
       return;
     }
 
-    const newTemplate: CreateGoalTemplateDTO = {
+    const newTemplate = {
       title,
       description,
       onCompleteAction,
@@ -39,7 +39,7 @@ export default function AddGoalPage() {
       status: "draft",
       createdAt: new Date(),
       updatedAt: new Date()
-    };
+    } as CreateGoalTemplateDTO;
 
     try {
       await addTemplate(newTemplate);
@@ -51,22 +51,18 @@ export default function AddGoalPage() {
   };
 
   return (
-    <div className="container mx-auto py-8 space-y-8">
-      <div className="flex justify-between items-center">
-        
-
-        <MainTitle
-          title={`Add New Goal`}
-          icon={Goal}
-          description="Fill in the goal details and define the steps."
-        />
-
-        <Button variant="ghost" onClick={() => navigate("/admin/goals")}>
-          <ArrowLeft className="h-4 w-4 mr-2" /> Back
+    <AdminOutletTemplate
+      title="Add New Goal"
+      icon={Goal}
+      description="Fill in the goal details and define the steps."
+      backPath="/admin/goals"
+      actions={
+        <Button onClick={handleSave}>
+          <Save className="h-4 w-4 mr-2" /> Save Goal
         </Button>
-      </div>
-
-      <div className="grid grid-cols-2 gap-8">
+      }
+    >
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <BasicInformation />
         <Card>
           <CardContent className="pt-6">
@@ -74,12 +70,6 @@ export default function AddGoalPage() {
           </CardContent>
         </Card>
       </div>
-
-      <div className="flex justify-end">
-        <Button onClick={handleSave}>
-          <Save className="h-4 w-4 mr-2" /> Save Goal
-        </Button>
-      </div>
-    </div>
+    </AdminOutletTemplate>
   );
 }

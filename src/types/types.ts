@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // src/types/types.ts
 export interface Category {
   id: string;
@@ -12,6 +13,7 @@ export interface DocumentType {
   categoryId: string;
   createdAt: Date;
   updatedAt: Date;
+  destinations?:any[]
 }
 
 export type DocumentWithoutId = Omit<DocumentType, 'id'>;

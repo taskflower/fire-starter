@@ -1,5 +1,5 @@
-// src/services/services.ts
-import { useGoalStore } from "@/store/useGoalStore";
+// src/services/restServices.ts
+import { useGoalExecutionStore } from "@/store/useGoalExecutionStore";
 
 export async function processWithService(
   endpoint: string,
@@ -7,7 +7,7 @@ export async function processWithService(
   stepId: string,
   selectedSteps: string[]
 ) {
-  const { stepsData } = useGoalStore.getState();
+  const { stepsData } = useGoalExecutionStore.getState();
 
   const stepsContent = selectedSteps.map((stepId) => ({
     stepId,

@@ -9,8 +9,8 @@ const AddGoalPage = lazy(() => import("@/pages/goals/AddGoalPage"));
 const pathRoutes: RouteObject[] = [
   { path: "goals", element: <GoalsListPage /> },
   { path: "goals/:id", element: <GoalDetailsPage /> },
-  { path: "goal/:id/edit", element: <EditGoalsPage /> },
-  { path: "goal/new", element: <AddGoalPage /> },
+  { path: "goals/:id/edit", element: <EditGoalsPage /> },
+  { path: "goals/new", element: <AddGoalPage /> },
 ];
 
 export default pathRoutes;

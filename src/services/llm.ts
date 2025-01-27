@@ -1,4 +1,6 @@
-import { useGoalStore } from '@/store/useGoalStore';
+// src/services/llm.ts
+import { useGoalExecutionStore } from '@/store/useGoalExecutionStore';
+import { useGoalManagementStore } from '@/store/useGoalManagementStore';
 import { DocumentWithId } from '@/types/types';
 
 export function buildPromptWithContext(
@@ -6,7 +8,8 @@ export function buildPromptWithContext(
   currentStepId: string,
   documents: DocumentWithId[]
 ): string {
-  const { steps, stepsData } = useGoalStore.getState();
+  const { stepsData } = useGoalExecutionStore.getState();
+  const { steps } = useGoalManagementStore.getState();
   const currentStep = steps.find(s => s.id === currentStepId);
   const messages: string[] = [];
 

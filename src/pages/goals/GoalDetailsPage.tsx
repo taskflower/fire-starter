@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Goal, Edit, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -11,26 +11,36 @@ import {
   CardFooter,
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import StepsDataViewer from "@/components/goals/stateDataDialog/StepsDataViewer";
-import { StepManager } from "@/components/goals/StepManager";
-import { StepNavigation } from "@/components/goals/StepNavigation";
+import StepsDataViewer from "@/components/goals/executions/process/state/StepsDataViewer";
 import { useGoalTemplates } from "@/hooks/useGoalTemplates";
-import { useGoalStore } from "@/store/useGoalStore";
-import MainTitle from "@/layouts/MainTitle";
-import { TemplateSelector } from "@/components/goals/TemplateSelector";
+import { useGoalExecutionStore } from "@/store/useGoalExecutionStore";
+import { useGoalManagementStore } from "@/store/useGoalManagementStore";
+import { useGoalExecution } from "@/hooks/useGoalExecution";
+import AdminOutletTemplate from "@/layouts/AdminOutletTemplate";
+import { StepManager } from "@/components/goals/executions/process/steps/StepManager";
+import { StepNavigation } from "@/components/goals/executions/process/steps/StepNavigation";
 
 export default function GoalDetailsPage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { templates, deleteTemplate } = useGoalTemplates();
+  const { startExecution, updateExecution, completeExecution } = useGoalExecution();
+  const [isLoading, setIsLoading] = useState(true);
+
   const {
     setTitle,
     setDescription,
     setOnCompleteAction,
     setSteps,
+  } = useGoalManagementStore();
+
+  const {
     currentStepIndex,
-    steps,
-  } = useGoalStore();
+    stepsData,
+    executionId,
+    setExecutionId,
+    steps
+  } = useGoalExecutionStore();
 
   useEffect(() => {
     if (!id) {
@@ -38,29 +48,32 @@ export default function GoalDetailsPage() {
       return;
     }
 
-    const template = templates.find((t) => t.id === id);
-    if (template) {
-      setTitle(template.title);
-      setDescription(template.description);
-      setOnCompleteAction(template.onCompleteAction);
-      setSteps(
-        template.steps.map((step) => ({
-          ...step,
-          isCompleted: false,
-        }))
-      );
-    } else {
-      navigate("/admin/goals");
+    if (templates.length > 0) {
+      setIsLoading(false);
+      const template = templates.find((t) => t.id === id);
+      if (template) {
+        const initTemplate = async () => {
+          setTitle(template.title);
+          setDescription(template.description);
+          setOnCompleteAction(template.onCompleteAction);
+          setSteps(
+            template.steps.map((step) => ({
+              ...step,
+              isCompleted: false,
+            }))
+          );
+          const newExecutionId = await startExecution(id);
+          setExecutionId(newExecutionId);
+        };
+        initTemplate();
+      }
     }
-  }, [
-    id,
-    templates,
-    navigate,
-    setTitle,
-    setDescription,
-    setOnCompleteAction,
-    setSteps,
-  ]);
+  }, [id, templates, navigate, setTitle, setDescription, setOnCompleteAction, setSteps]);
+
+  useEffect(() => {
+    if (!executionId) return;
+    updateExecution(executionId, stepsData, currentStepIndex);
+  }, [stepsData, currentStepIndex, executionId]);
 
   const handleTemplateDelete = async () => {
     if (!id) return;
@@ -68,32 +81,39 @@ export default function GoalDetailsPage() {
     navigate("/admin/goals");
   };
 
-  const template = templates.find((t) => t.id === id);
+  const handleComplete = async () => {
+    if (!executionId) return;
+    await completeExecution(executionId);
+    navigate('/admin/goals');
+  };
 
-  if (!template) return null;
+  if (isLoading) return <div>Loading...</div>;
+
+  const template = templates.find((t) => t.id === id);
+  if (!template) return <div>Template not found</div>;
 
   return (
-    <div className="container mx-auto py-8 space-y-8">
-      <MainTitle
-        title={template.title}
-        icon={Goal}
-        description="Follow the steps to complete your goal"
-      />
-      <TemplateSelector selectedId={id} />
-      <div className="flex gap-4 justify-end">
-        <Button
-          variant="outline"
-          onClick={() => navigate(`/admin/goal/${id}/edit`)}
-        >
-          <Edit className="h-4 w-4 mr-2" />
-          Edit
-        </Button>
-        <Button variant="outline" onClick={handleTemplateDelete}>
-          <Trash2 className="h-4 w-4 mr-2" />
-          Delete
-        </Button>
-      </div>
-
+    <AdminOutletTemplate
+      title={template.title}
+      icon={Goal}
+      description="Follow the steps to complete your goal"
+      backPath="/admin/goals"
+      actions={
+        <>
+          <Button
+            variant="outline"
+            onClick={() => navigate(`/admin/goals/${id}/edit`)}
+          >
+            <Edit className="h-4 w-4 mr-2" />
+            Edit
+          </Button>
+          <Button variant="outline" onClick={handleTemplateDelete}>
+            <Trash2 className="h-4 w-4 mr-2" />
+            Delete
+          </Button>
+        </>
+      }
+    >
       <Card>
         <CardHeader>
           <div className="flex items-start justify-between">
@@ -104,20 +124,18 @@ export default function GoalDetailsPage() {
             <StepsDataViewer />
           </div>
         </CardHeader>
-
         <Separator className="mb-6" />
-
         <CardContent>
           <StepManager />
         </CardContent>
-
         <CardFooter className="bg-muted/50">
           <StepNavigation
             canGoBack={currentStepIndex > 0}
             canGoForward={currentStepIndex < steps.length - 1}
+            onComplete={handleComplete}
           />
         </CardFooter>
       </Card>
-    </div>
+    </AdminOutletTemplate>
   );
 }

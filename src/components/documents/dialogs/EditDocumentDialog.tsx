@@ -1,3 +1,4 @@
+import React from 'react';
 import {
   Dialog,
   DialogContent,
@@ -22,9 +23,10 @@ const EditDocumentDialog: React.FC<EditDocumentDialogProps> = ({
   onClose,
   onEdit,
   categories,
-  getCategoryPath,
+
 }) => {
   const handleSubmit = async (docData: DocumentWithoutId) => {
+    console.log('EditDialog - submitting document:', docData);
     await onEdit({
       ...docData,
       id: document.id
@@ -36,6 +38,7 @@ const EditDocumentDialog: React.FC<EditDocumentDialogProps> = ({
     title: document.title,
     content: document.content,
     categoryId: document.categoryId,
+    destinations: document.destinations,
     createdAt: document.createdAt,
     updatedAt: document.updatedAt
   };
@@ -51,7 +54,7 @@ const EditDocumentDialog: React.FC<EditDocumentDialogProps> = ({
           onSubmit={handleSubmit}
           onCancel={onClose}
           categories={categories}
-          getCategoryPath={getCategoryPath}
+          
           submitLabel="Save Changes"
         />
       </DialogContent>
