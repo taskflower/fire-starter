@@ -12,16 +12,16 @@ export function StepNavigation({
 }: {
   canGoBack: boolean;
   canGoForward: boolean;
-  onComplete: () => void;  // dodaj to
+  onComplete: () => void;
 }) {
   const { moveToNextStep, moveToPreviousStep, currentStepIndex } = useGoalExecutionStore();
-  const { onCompleteAction, steps } = useGoalManagementStore();
+  const { steps, onCompleteAction } = useGoalManagementStore();
   
   const isSummaryNext = onCompleteAction?.type === "summary" && currentStepIndex === steps.length - 1;
   const showingSummary = currentStepIndex === steps.length;
 
   const handleNext = () => {
-    if (isSummaryNext || canGoForward) {
+    if (canGoForward || isSummaryNext) {
       moveToNextStep();
     }
   };
@@ -37,13 +37,14 @@ export function StepNavigation({
         Previous Step
       </Button>
       <StepProgress />
-      {showingSummary ? 
-  <Button onClick={onComplete}>Finish</Button> : 
-  <Button onClick={handleNext}>
-    Next Step
-    {canGoForward && <ChevronRight className="ml-2 h-4 w-4" />}
-  </Button>
-}
+      {showingSummary ? (
+        <Button onClick={onComplete}>Finish</Button>
+      ) : (
+        <Button onClick={handleNext} disabled={!canGoForward && !isSummaryNext}>
+          Next Step
+          <ChevronRight className="ml-2 h-4 w-4" />
+        </Button>
+      )}
     </div>
   );
 }

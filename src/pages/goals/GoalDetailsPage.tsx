@@ -1,5 +1,6 @@
+// GoalDetailsPage.tsx
 import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { Goal, Edit, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -22,9 +23,11 @@ import { StepNavigation } from "@/components/goals/executions/process/steps/Step
 
 export default function GoalDetailsPage() {
   const { id } = useParams();
+  const [searchParams] = useSearchParams();
+  const executionIdFromUrl = searchParams.get('execution');
   const navigate = useNavigate();
   const { templates, deleteTemplate } = useGoalTemplates();
-  const { startExecution, updateExecution, completeExecution } = useGoalExecution();
+  const { updateExecution, completeExecution } = useGoalExecution();
   const [isLoading, setIsLoading] = useState(true);
 
   const {
@@ -37,13 +40,13 @@ export default function GoalDetailsPage() {
   const {
     currentStepIndex,
     stepsData,
-    executionId,
     setExecutionId,
-    steps
+    steps,
+    initializeSteps
   } = useGoalExecutionStore();
 
   useEffect(() => {
-    if (!id) {
+    if (!id || !executionIdFromUrl) {
       navigate("/admin/goals");
       return;
     }
@@ -52,28 +55,29 @@ export default function GoalDetailsPage() {
       setIsLoading(false);
       const template = templates.find((t) => t.id === id);
       if (template) {
-        const initTemplate = async () => {
-          setTitle(template.title);
-          setDescription(template.description);
-          setOnCompleteAction(template.onCompleteAction);
-          setSteps(
-            template.steps.map((step) => ({
-              ...step,
-              isCompleted: false,
-            }))
-          );
-          const newExecutionId = await startExecution(id);
-          setExecutionId(newExecutionId);
-        };
-        initTemplate();
+        setTitle(template.title);
+        setDescription(template.description);
+        setOnCompleteAction(template.onCompleteAction);
+        
+        const initialSteps = template.steps.map((step) => ({
+          ...step,
+          isCompleted: false,
+        }));
+        setSteps(initialSteps);
+        initializeSteps(initialSteps);
+        setExecutionId(executionIdFromUrl);
       }
     }
-  }, [id, templates, navigate, setTitle, setDescription, setOnCompleteAction, setSteps]);
+  }, [id, executionIdFromUrl, templates]);
 
   useEffect(() => {
-    if (!executionId) return;
-    updateExecution(executionId, stepsData, currentStepIndex);
-  }, [stepsData, currentStepIndex, executionId]);
+    const debounceUpdate = setTimeout(() => {
+      if (!executionIdFromUrl) return;
+      updateExecution(executionIdFromUrl, stepsData, currentStepIndex);
+    }, 1000);
+
+    return () => clearTimeout(debounceUpdate);
+  }, [stepsData, currentStepIndex]);
 
   const handleTemplateDelete = async () => {
     if (!id) return;
@@ -82,8 +86,8 @@ export default function GoalDetailsPage() {
   };
 
   const handleComplete = async () => {
-    if (!executionId) return;
-    await completeExecution(executionId);
+    if (!executionIdFromUrl) return;
+    await completeExecution(executionIdFromUrl);
     navigate('/admin/goals');
   };
 
