@@ -44,31 +44,34 @@ export function StepsList() {
             Dodaj i zarządzaj krokami dla tego celu
           </p>
         </div>
-        <Button onClick={handleAdd}>
+        <Button className="bg-white text-black hover:bg-gray-100" onClick={handleAdd}>
           <Plus className="h-4 w-4 mr-2" /> Dodaj Krok
         </Button>
       </div>
 
       <div className="space-y-2">
         {steps.map((step, index) => (
-          <Card key={step.id} className="p-4">
+          <Card key={step.id} className="p-4 bg-black text-white">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
-                <span className="text-2xl font-bold text-muted-foreground">
+                <span className="text-2xl font-bold text-white">
                   {index + 1}
                 </span>
                 <div>
-                  <h4 className="font-medium">{step.title}</h4>
-                  <p className="text-sm text-muted-foreground">
+                  <h4 className="font-medium text-white">{step.title}</h4>
+                  <p className="text-sm text-gray-300">
                     {step.description}
                   </p>
                 </div>
-                <Badge variant="outline">{step.type}</Badge>
+                <Badge variant="outline" className="text-white border-white">
+                  {step.type}
+                </Badge>
               </div>
               <div className="flex gap-2">
                 <Button
                   variant="ghost"
                   size="icon"
+                  className="text-white hover:text-white hover:bg-gray-800"
                   onClick={() => handleEdit(step)}
                 >
                   <Edit className="h-4 w-4" />
@@ -76,6 +79,7 @@ export function StepsList() {
                 <Button
                   variant="ghost"
                   size="icon"
+                  className="text-white hover:text-white hover:bg-gray-800"
                   onClick={() => handleDelete(index)}
                 >
                   <Trash2 className="h-4 w-4" />

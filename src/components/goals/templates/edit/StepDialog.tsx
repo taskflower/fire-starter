@@ -15,6 +15,7 @@ import { QuestionsForm } from "./forms/QuestionsForm";
 import { LLMForm } from "./forms/LLMForm";
 import { InsertForm } from "./forms/InsertForm";
 import { ServicesForm } from "./forms/ServicesForm";
+import SaveButton from "@/components/common/SaveButton";
 
 import { Step, StepType } from "@/types/goals";
 import { useGoalManagementStore } from "@/store/useGoalManagementStore";
@@ -31,43 +32,50 @@ export function StepDialog({ open, onOpenChange, step }: StepDialogProps) {
     setStepFormData,
     resetStepForm,
     steps,
-    handleStepSave
+    handleStepSave,
+    isSaving,
   } = useGoalManagementStore();
 
   useEffect(() => {
-    if (step) {
-      setStepFormData({
-        ...step,
-        config: step.config || {
-          documentRequirements: [],
-          questions: [],
-          llmPrompt: "",
-        },
-      });
-    } else {
+    if (open) {
       resetStepForm();
+      if (step) {
+        setStepFormData({
+          ...step,
+          config: step.config || {},
+        });
+      }
     }
-  }, [step, setStepFormData, resetStepForm]);
+  }, [open, step, setStepFormData, resetStepForm]);
 
-  const onSave = () => {
+  const onSave = async () => {
     if (!stepFormData.title || !stepFormData.type) return;
 
-    const finalStep: Step = {
-      id: step?.id || `step-${Date.now()}`,
-      title: stepFormData.title,
-      description: stepFormData.description || "",
-      type: stepFormData.type as StepType,
-      isCompleted: false,
-      config: stepFormData.config || {},
-      order: step?.order || steps.length,
-    };
-
-    handleStepSave(finalStep);
-    onOpenChange(false);
+    try {
+      const finalStep: Step = {
+        id: step?.id || `step-${Date.now()}`,
+        title: stepFormData.title,
+        description: stepFormData.description || "",
+        type: stepFormData.type as StepType,
+        isCompleted: false,
+        config: stepFormData.config || {},
+        order: step?.order || steps.length,
+      };
+      await handleStepSave(finalStep);
+      onOpenChange(false);
+    } catch (error) {
+      console.error('Error saving step:', error);
+      throw error; // Propagate error to trigger SaveButton error state
+    }
   };
 
+  const isValid = Boolean(stepFormData.title && stepFormData.type);
+
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={(isOpen) => {
+      if (isOpen === false && isSaving) return;
+      onOpenChange(isOpen);
+    }}>
       <DialogContent className="sm:max-w-4xl">
         <DialogHeader>
           <DialogTitle>{step ? "Edit Step" : "Add New Step"}</DialogTitle>
@@ -82,6 +90,7 @@ export function StepDialog({ open, onOpenChange, step }: StepDialogProps) {
                 onValueChange={(value: StepType) =>
                   setStepFormData({ type: value })
                 }
+                disabled={isSaving}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Select step type..." />
@@ -102,6 +111,7 @@ export function StepDialog({ open, onOpenChange, step }: StepDialogProps) {
                 value={stepFormData.title}
                 onChange={(e) => setStepFormData({ title: e.target.value })}
                 placeholder="Enter step title..."
+                disabled={isSaving}
               />
             </div>
 
@@ -111,6 +121,7 @@ export function StepDialog({ open, onOpenChange, step }: StepDialogProps) {
                 value={stepFormData.description}
                 onChange={(e) => setStepFormData({ description: e.target.value })}
                 placeholder="Enter step description..."
+                disabled={isSaving}
               />
             </div>
           </div>
@@ -127,8 +138,15 @@ export function StepDialog({ open, onOpenChange, step }: StepDialogProps) {
         </div>
 
         <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)}>Cancel</Button>
-          <Button onClick={onSave}>Save Step</Button>
+          <Button variant="outline" onClick={() => onOpenChange(false)} disabled={isSaving}>
+            Cancel
+          </Button>
+          <SaveButton 
+            onSave={onSave}
+            isValid={isValid}
+          >
+            {step ? 'Update Step' : 'Add Step'}
+          </SaveButton>
         </DialogFooter>
       </DialogContent>
     </Dialog>

@@ -1,14 +1,15 @@
+// src/pages/admin/goals/AddGoalPage.tsx
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useGoalTemplates } from "@/hooks/useGoalTemplates";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Save, Goal } from "lucide-react";
+import { Goal } from "lucide-react";
 import { useGoalManagementStore } from "@/store/useGoalManagementStore";
 import { BasicInformation } from "@/components/goals/templates/edit/forms/BasicInformation";
 import type { CreateGoalTemplateDTO } from "@/types/goals";
 import AdminOutletTemplate from "@/layouts/AdminOutletTemplate";
 import { StepsList } from "@/components/goals/templates/edit/StepsList";
+import SaveButton from "@/components/common/SaveButton";
 
 export default function AddGoalPage() {
   const navigate = useNavigate();
@@ -47,6 +48,7 @@ export default function AddGoalPage() {
     } catch (error) {
       console.error("Error while saving template:", error);
       alert("There was a problem saving the template. Please try again.");
+      throw error; // Propagate error to trigger SaveButton error state
     }
   };
 
@@ -57,9 +59,12 @@ export default function AddGoalPage() {
       description="Fill in the goal details and define the steps."
       backPath="/admin/goals"
       actions={
-        <Button onClick={handleSave}>
-          <Save className="h-4 w-4 mr-2" /> Save Goal
-        </Button>
+        <SaveButton 
+          onSave={handleSave} 
+          isValid={title.trim().length > 0}
+        >
+          Create Goal
+        </SaveButton>
       }
     >
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">

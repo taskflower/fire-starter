@@ -1,7 +1,20 @@
 // src/store/useGoalManagementStore.ts
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { Step, OnCompleteAction } from '@/types/goals';
+import { Step, OnCompleteAction, StepConfig } from '@/types/goals';
+
+export const defaultStepConfig: StepConfig = {
+  documentRequirements: [],
+  questions: [],
+  llmPrompt: "",
+  services: [],
+  insert: [],
+  validationRules: {},
+  includeSteps: [],
+  selectedSteps: [],
+  serviceName: "",
+  serviceEndpoint: "",
+};
 
 interface GoalManagementState {
   title: string;
@@ -11,7 +24,13 @@ interface GoalManagementState {
   editingStep: Step | null;
   isDialogOpen: boolean;
   isProcessingLLM: boolean;
-  stepFormData: Partial<Step>;
+  isSaving: boolean;
+  stepFormData: {
+    title?: string;
+    description?: string;
+    type?: string;
+    config: StepConfig;
+  };
   selectedStepCategories: string[];
   selectedLLMSteps: string[];
 }
@@ -24,17 +43,12 @@ const initialState: GoalManagementState = {
   editingStep: null,
   isDialogOpen: false,
   isProcessingLLM: false,
+  isSaving: false,
   stepFormData: {
     title: "",
     description: "",
     type: undefined,
-    config: {
-      documentRequirements: [],
-      questions: [],
-      llmPrompt: "",
-      services: [],
-      insert: [],
-    },
+    config: defaultStepConfig,
   },
   selectedStepCategories: [],
   selectedLLMSteps: [],
@@ -48,11 +62,17 @@ interface GoalManagementActions {
   setEditingStep: (step: Step | null) => void;
   setIsDialogOpen: (isOpen: boolean) => void;
   setIsProcessingLLM: (isProcessing: boolean) => void;
-  setStepFormData: (data: Partial<Step>) => void;
+  setIsSaving: (isSaving: boolean) => void;
+  setStepFormData: (data: Partial<{
+    title?: string;
+    description?: string;
+    type?: string;
+    config?: Partial<StepConfig>;
+  }>) => void;
   resetStepForm: () => void;
   setSelectedCategories: (categories: string[]) => void;
   setSelectedLLMSteps: (stepIds: string[]) => void;
-  handleStepSave: (updatedStep: Step) => void;
+  handleStepSave: (updatedStep: Step) => Promise<void>;
   resetStore: () => void;
 }
 
@@ -68,36 +88,64 @@ export const useGoalManagementStore = create<GoalManagementState & GoalManagemen
       setEditingStep: (step) => set({ editingStep: step }),
       setIsDialogOpen: (isOpen) => set({ isDialogOpen: isOpen }),
       setIsProcessingLLM: (isProcessing) => set({ isProcessingLLM: isProcessing }),
+      setIsSaving: (isSaving) => set({ isSaving }),
+      
       setStepFormData: (data) => set((state) => ({
-        stepFormData: { ...state.stepFormData, ...data },
+        stepFormData: {
+          ...state.stepFormData,
+          ...data,
+          config: data.config ? {
+            ...state.stepFormData.config,
+            ...data.config
+          } : state.stepFormData.config,
+        },
       })),
+
       resetStepForm: () => set({
-        stepFormData: initialState.stepFormData,
+        stepFormData: {
+          ...initialState.stepFormData,
+          config: { ...defaultStepConfig }
+        },
       }),
+      
       setSelectedCategories: (categories) => set({ selectedStepCategories: categories }),
       setSelectedLLMSteps: (stepIds) => set({ selectedLLMSteps: stepIds }),
       resetStore: () => set(initialState),
-      handleStepSave: (updatedStep) => {
+      
+      handleStepSave: async (updatedStep) => {
         const state = get();
         const { editingStep, steps } = state;
-        let newSteps;
+        
+        set({ isSaving: true });
+        
+        try {
+          let newSteps;
 
-        if (editingStep) {
-          newSteps = steps.map((s) => (s.id === editingStep.id ? updatedStep : s));
-        } else {
-          newSteps = [...steps, updatedStep];
+          if (editingStep) {
+            newSteps = steps.map((s) => (s.id === editingStep.id ? updatedStep : s));
+          } else {
+            newSteps = [...steps, updatedStep];
+          }
+
+          newSteps = newSteps.map((step, index) => ({
+            ...step,
+            order: index,
+          }));
+
+          // Dodajemy sztuczne opóźnienie do testów
+          await new Promise(resolve => setTimeout(resolve, 1000));
+
+          set({
+            steps: newSteps,
+            editingStep: null,
+            isDialogOpen: false,
+          });
+        } catch (error) {
+          console.error('Error saving step:', error);
+          // Tu możesz dodać obsługę błędów
+        } finally {
+          set({ isSaving: false });
         }
-
-        newSteps = newSteps.map((step, index) => ({
-          ...step,
-          order: index,
-        }));
-
-        set({
-          steps: newSteps,
-          editingStep: null,
-          isDialogOpen: false,
-        });
       },
     }),
     {

@@ -9,7 +9,6 @@ import { useGoalTemplates } from "@/hooks/useGoalTemplates";
 import { useGoalExecution } from "@/hooks/useGoalExecution";
 import AdminOutletTemplate from "@/layouts/AdminOutletTemplate";
 
-
 interface TemplatesTableProps {
   templates: GoalTemplate[];
 }
@@ -33,7 +32,7 @@ function TemplatesTable({ templates }: TemplatesTableProps) {
         <TableRow>
           <TableHead>Nazwa</TableHead>
           <TableHead>Opis</TableHead>
-          <TableHead>Akcje</TableHead>
+          <TableHead className="text-right">Akcje</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -41,7 +40,7 @@ function TemplatesTable({ templates }: TemplatesTableProps) {
           <TableRow key={template.id}>
             <TableCell>{template.title}</TableCell>
             <TableCell>{template.description}</TableCell>
-            <TableCell className="space-x-2">
+            <TableCell className="text-right space-x-2">
               <Button onClick={() => handleStartProcess(template.id)}>
                 Start
               </Button>
@@ -74,7 +73,6 @@ export default function GoalTemplatesPage() {
     >
       <GoalTabs activeTab="templates" />
       <TemplatesTable templates={templates} />
-    
     </AdminOutletTemplate>
   );
 }
