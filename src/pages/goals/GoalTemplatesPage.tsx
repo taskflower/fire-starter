@@ -1,17 +1,20 @@
-// GoalsListPage.tsx
+// src/pages/goals/GoalTemplatesPage.tsx
 import { Goal, Plus } from "lucide-react";
+import { GoalTemplate } from "@/types/goals";
+import { GoalTabs } from "@/components/goals/GoalTabs";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useGoalTemplates } from "@/hooks/useGoalTemplates";
-import { useGoalExecutionStore } from "@/store/useGoalExecutionStore";
 import { useGoalExecution } from "@/hooks/useGoalExecution";
 import AdminOutletTemplate from "@/layouts/AdminOutletTemplate";
-import { useEffect } from "react";
-import { ExecutionsTable } from "@/components/goals/executions/list/ExecutionsTable";
 
-function TemplatesTable({ templates }) {
+
+interface TemplatesTableProps {
+  templates: GoalTemplate[];
+}
+
+function TemplatesTable({ templates }: TemplatesTableProps) {
   const navigate = useNavigate();
   const { startExecution } = useGoalExecution();
 
@@ -53,15 +56,9 @@ function TemplatesTable({ templates }) {
   );
 }
 
-export default function GoalsListPage() {
+export default function GoalTemplatesPage() {
   const navigate = useNavigate();
   const { templates } = useGoalTemplates();
-  const { executions, loadExecutions } = useGoalExecutionStore();
-  const { resumeExecution } = useGoalExecution();
-
-  useEffect(() => {
-    loadExecutions();
-  }, []);
 
   return (
     <AdminOutletTemplate
@@ -75,30 +72,9 @@ export default function GoalsListPage() {
         </Button>
       }
     >
-      <Tabs defaultValue="templates">
-        <TabsList>
-          <TabsTrigger value="templates">Goal Templates</TabsTrigger>
-          <TabsTrigger value="executions">Active Processes</TabsTrigger>
-        </TabsList>
-        
-        <TabsContent value="templates">
-          <TemplatesTable templates={templates} />
-        </TabsContent>
-        
-        <TabsContent value="executions">
-          <ExecutionsTable 
-            templates={templates}
-            executions={executions}
-            onResumeExecution={async (id) => {
-              await resumeExecution(id);
-              const execution = executions.find(e => e.id === id);
-              if (execution) {
-                navigate(`/admin/goals/${execution.templateId}?execution=${id}`);
-              }
-            }}
-          />
-        </TabsContent>
-      </Tabs>
+      <GoalTabs activeTab="templates" />
+      <TemplatesTable templates={templates} />
+    
     </AdminOutletTemplate>
   );
 }

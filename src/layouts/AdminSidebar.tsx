@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Settings, FileText, Target,  Route } from "lucide-react"; // Import ikon Lucide
+import { Settings, FileText, Target, Route } from "lucide-react"; // Import ikon Lucide
 
 export const AdminSidebar = () => {
   return (
@@ -14,16 +14,14 @@ export const AdminSidebar = () => {
                 <Home className="mr-2 h-5 w-5" /> Dashboard
               </Link>
             </Button> */}
-          
-           
-          
+
             <Button variant="ghost" className="w-full justify-start" asChild>
               <Link to="/admin/relations">
                 <Route className="mr-2 h-5 w-5" /> Destinations
               </Link>
             </Button>
             <Button variant="ghost" className="w-full justify-start" asChild>
-              <Link to="/admin/goals">
+              <Link to="/admin/goals/executions">
                 <Target className="mr-2 h-5 w-5" /> Goals
               </Link>
             </Button>

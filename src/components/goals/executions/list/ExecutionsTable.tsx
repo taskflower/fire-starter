@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // src/components/goals/executions/list/ExecutionsTable.tsx
+import { GoalTemplate, GoalExecution } from "@/types/goals";
 import {
   Table, TableBody, TableCell, TableHead,
   TableHeader, TableRow
@@ -11,15 +12,16 @@ import { useState } from "react";
 import { useGoalExecutionStore } from "@/store/useGoalExecutionStore";
 import { useGoalManagementStore } from "@/store/useGoalManagementStore";
 import { Trash } from "lucide-react";
-import { ConfirmDeleteDialog } from "@/components/ui/ConfirmDeleteDialog"; // Upewnij się, że ten komponent istnieje
+import { ConfirmDeleteDialog } from "@/components/ui/ConfirmDeleteDialog";
 
 interface Props {
   onResumeExecution: (id: string) => void;
+  templates: GoalTemplate[];
+  executions: GoalExecution[];
 }
 
-export function ExecutionsTable({ onResumeExecution }: Props) {
+export function ExecutionsTable({ onResumeExecution, executions }: Props) {
   const [statusFilter, setStatusFilter] = useState<'all' | 'completed' | 'in_progress'>('all');
-  const executions = useGoalExecutionStore(state => state.executions);
   const steps = useGoalManagementStore(state => state.steps);
   const title = useGoalManagementStore(state => state.title);
 
@@ -60,17 +62,17 @@ export function ExecutionsTable({ onResumeExecution }: Props) {
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>ID</TableHead> {/* Nowa kolumna ID */}
+            <TableHead>ID</TableHead>
             <TableHead>Cel</TableHead>
             <TableHead>Postęp</TableHead>
             <TableHead>Status</TableHead>
-            <TableHead className="text-right">Akcje</TableHead> {/* Wyrównanie do prawej */}
+            <TableHead className="text-right">Akcje</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {filteredExecutions.map((execution) => (
             <TableRow key={execution.id}>
-              <TableCell>{execution.id}</TableCell> {/* Wyświetlanie ID */}
+              <TableCell>{execution.id}</TableCell>
               <TableCell>{title}</TableCell>
               <TableCell>
                 {execution.currentStepIndex + 1} / {steps.length}
@@ -80,7 +82,7 @@ export function ExecutionsTable({ onResumeExecution }: Props) {
                   {execution.status === 'completed' ? 'Zakończone' : 'W trakcie'}
                 </Badge>
               </TableCell>
-              <TableCell className="text-right space-x-2"> {/* Wyrównanie do prawej */}
+              <TableCell className="text-right space-x-2">
                 {execution.status === 'in_progress' && (
                   <Button 
                     variant="outline"
