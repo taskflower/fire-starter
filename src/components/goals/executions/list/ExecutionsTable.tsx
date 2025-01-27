@@ -7,12 +7,13 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Select } from "@/components/ui/select";
 import { useState } from "react";
 import { useGoalExecutionStore } from "@/store/useGoalExecutionStore";
 import { useGoalManagementStore } from "@/store/useGoalManagementStore";
 import { Trash } from "lucide-react";
 import { ConfirmDeleteDialog } from "@/components/ui/ConfirmDeleteDialog";
+import { useQueryParams } from "@/hooks/useQueryParams";
+import { ExecutionFilters } from "./ExecutionFilters";
 
 interface Props {
   onResumeExecution: (id: string) => void;
@@ -20,13 +21,17 @@ interface Props {
   executions: GoalExecution[];
 }
 
+interface FilterParams extends Record<string, string> {
+  status: string;
+}
+
 export function ExecutionsTable({ onResumeExecution, executions }: Props) {
-  const [statusFilter, setStatusFilter] = useState<'all' | 'completed' | 'in_progress'>('all');
+  const { params, setParams } = useQueryParams<FilterParams>();
+  const statusFilter = params.status || 'all';
+  
   const steps = useGoalManagementStore(state => state.steps);
   const title = useGoalManagementStore(state => state.title);
-
   const deleteExecution = useGoalExecutionStore(state => state.deleteExecution);
-
   const [deleteId, setDeleteId] = useState<string | null>(null);
 
   const handleDeleteClick = (id: string) => {
@@ -44,20 +49,28 @@ export function ExecutionsTable({ onResumeExecution, executions }: Props) {
     setDeleteId(null);
   };
 
+  const handleStatusChange = (value: string) => {
+    setParams({ status: value === 'all' ? undefined : value });
+  };
+
   const filteredExecutions = executions.filter(execution => 
     statusFilter === 'all' || execution.status === statusFilter
   );
 
+  if (filteredExecutions.length === 0) {
+    return <ExecutionFilters 
+      statusFilter={statusFilter}
+      onStatusChange={handleStatusChange}
+      isEmpty={true}
+    />;
+  }
+
   return (
     <div className="space-y-4">
-      <Select
-        value={statusFilter}
-        onValueChange={(value) => setStatusFilter(value as any)}
-      >
-        <option value="all">Wszystkie</option>
-        <option value="completed">Zakończone</option>
-        <option value="in_progress">W trakcie</option>
-      </Select>
+      <ExecutionFilters 
+        statusFilter={statusFilter}
+        onStatusChange={handleStatusChange}
+      />
 
       <Table>
         <TableHeader>
